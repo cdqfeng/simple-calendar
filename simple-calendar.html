@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #calendar_container {
+            width: 350px;
+        }
+        #calendar_container .item {
+            display: inline-block;
+            width: 50px;
+        }
+        #calendar_container .gray {
+            color: gray;
+        }
+        #calendar_container .red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div id="calendar_container"></div>
+    <script>
+        // 渲染日历
+        function renderCalendar(containerId, dateStr) {
+            // 当前日期对象
+            var currentDate = new Date(dateStr);
+
+            // 存放当前月的整个天数
+            var calendarDays = [];
+            // 存放当前月的有效天数
+            var currentMonthDays = [];
+
+            // 获取当月总的天数
+            var d1 = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+            var totalDays = d1.getDate();
+
+            // 获取第一天在一周中的位置
+            var d2 = new Date(currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + 1);
+            var firstDay = d2.getDay();
+            var firstDayIndex = firstDay == 0 ? 6 : firstDay - 1;
+
+            var count = 1;	// 计数器
+            for (var i = 0; i < totalDays; i++) {
+                currentMonthDays[i] = count;
+                count++;
+            }
+
+            // 获取上个月的总天数
+            var lastMonthTotalDays = new Date(2018,11,0).getDate()
+
+            // 填充日历头部的天数
+            var headDays = [];
+            var headStartDay = lastMonthTotalDays - firstDayIndex;
+            for (var i = 0; i < firstDayIndex; i++) {
+                headStartDay++;
+                headDays[i] = headStartDay;
+            }
+
+            // 填充日历尾部的天数
+            var endDays = [];
+            for (var i  = 0; i < 42 - totalDays - firstDayIndex; i++) {
+                endDays[i] = i+1;
+            }
+            
+            calendarDays = headDays.concat(currentMonthDays, endDays);
+            
+            // 日历容器节点
+            var calendarNode = document.getElementById(containerId);
+            
+            // 添加节点
+            for (var i = 0; i < calendarDays.length; i++) {
+                var node = document.createElement('div');
+                var className = 'item';
+                // 非当前月的天数 字体置灰
+                if (i < firstDayIndex || i > totalDays + firstDayIndex - 1) {
+                    className += ' gray'
+                }
+                if (calendarDays[i] == currentDate.getDate()) {
+                    className += ' red';
+                }
+                node.setAttribute('class', className);
+                node.textContent = calendarDays[i];
+                calendarNode.appendChild(node);
+            }
+        }
+
+        // 获取今天的日期字符串
+        var date = new Date();
+        var todayDateStr = date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate();
+
+        renderCalendar('calendar_container', todayDateStr);
+
+    </script>
+</body>
+</html>
